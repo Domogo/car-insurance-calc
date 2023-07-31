@@ -1,7 +1,12 @@
-import { Discount } from "@/util/types";
+import { useInsurance } from "@/util/insuranceContext";
+import { CheckBoxIds, Discount } from "@/util/types";
 import { FC } from "react";
 
 export const LabelledCheckbox: FC<Discount> = (discount) => {
+  const { form, onCheckboxClick } = useInsurance();
+
+  const vehiclePower = form.getValues("vehiclePower");
+
   return (
     <div
       key={discount.id}
@@ -11,8 +16,10 @@ export const LabelledCheckbox: FC<Discount> = (discount) => {
         <input
           id={discount.id}
           aria-describedby={discount.description}
-          name={discount.id}
           type="checkbox"
+          disabled={discount.id === "strongCarSurcharge"}
+          {...form.register(discount.id as CheckBoxIds)}
+          onClick={onCheckboxClick}
           className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
         />
       </div>

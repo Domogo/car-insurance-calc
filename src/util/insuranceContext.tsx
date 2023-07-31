@@ -1,14 +1,22 @@
-import { FC, ReactNode, createContext, useContext, useState } from "react";
-import { InsuranceFormSchema, schema } from "./types";
+import {
+  FC,
+  MouseEventHandler,
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { InsuranceFormSchema, InsurancePrices, schema } from "./types";
 import { SubmitHandler, UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 
 interface InsuranceContext {
   form: UseFormReturn<InsuranceFormSchema>;
-  basePrice: number;
-  totalPrice: number;
+  prices: InsurancePrices;
   onSubmit: SubmitHandler<InsuranceFormSchema>;
+  onCheckboxClick: MouseEventHandler<HTMLInputElement>;
 }
 
 const insuranceContext = createContext<InsuranceContext>(
@@ -21,21 +29,48 @@ export const InsuranceProvider: FC<{ children: ReactNode }> = ({
   const form = useForm<InsuranceFormSchema>({
     resolver: zodResolver(schema),
   });
-  const [basePrice, setBasePrice] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(0);
 
-  const onSubmit: SubmitHandler<InsuranceFormSchema> = async (data) => {
+  const [prices, setPrices] = useState<InsurancePrices>({} as InsurancePrices);
+
+  const fetchPrices = async (data: InsuranceFormSchema) => {
     const response = await axios.post("/api/insurance", data);
-    console.log(response);
+
+    const prices = response.data;
+    setPrices(prices);
+  };
+
+  // form submit
+  const onSubmit: SubmitHandler<InsuranceFormSchema> = async (data) => {
+    if (data.vehiclePower <= 80) {
+      form.setValue("vipDiscount", false);
+    }
+
+    if (data.vehiclePower > 100) {
+      form.setValue("strongCarSurcharge", true);
+    } else {
+      form.setValue("strongCarSurcharge", false);
+    }
+    await fetchPrices(data);
+  };
+
+  // re-trigger calculation on every checkbox click
+  const onCheckboxClick: MouseEventHandler<HTMLInputElement> = async (
+    event
+  ) => {
+    const data = form.getValues();
+    await fetchPrices({
+      ...data,
+      [event.currentTarget.id]: event.currentTarget.checked,
+    });
   };
 
   return (
     <insuranceContext.Provider
       value={{
         form,
-        basePrice,
-        totalPrice,
+        prices,
         onSubmit,
+        onCheckboxClick,
       }}
     >
       {children}

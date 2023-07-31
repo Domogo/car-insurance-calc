@@ -4,6 +4,7 @@ import { InsuranceProvider } from "@/util/insuranceContext";
 import { Header } from "../Header";
 import { InsuranceForm } from "../InsuranceForm";
 import { Coverages } from "../Coverages";
+import { InsuranceDetails } from "../InsuranceDetails";
 
 export const Calculator = () => {
   return (
@@ -11,7 +12,10 @@ export const Calculator = () => {
       <Header />
 
       <div className="flex justify-between">
-        <InsuranceForm />
+        <div className="flex flex-col w-full">
+          <InsuranceForm />
+          <InsuranceDetails />
+        </div>
         <Coverages />
       </div>
     </InsuranceProvider>
