@@ -85,6 +85,7 @@ export const DISCOUNTS: Discount[] = [
 
 export type InsurancePrices = {
   basePrice: number;
+  basePriceWithoutPriceMatch: number;
   totalPrice: number;
   commercialDiscount: number;
   advisorDiscount: number;

@@ -8,12 +8,16 @@ export const InsuranceDetails = () => {
   const voucher = form.getValues("voucher");
   const voucherAmount = isNaN(Number(voucher)) ? 0 : Number(voucher);
   return (
-    <div>
+    <div className="px-28 py-8 flex flex-col gap-4">
       <p>InsuranceDetails</p>
 
       <hr />
 
       <p>Base price: {prices.basePrice} EUR</p>
+      <p>
+        Base price without price matching: {prices.basePriceWithoutPriceMatch}{" "}
+        EUR
+      </p>
       <p>Total price: {prices.totalPrice} EUR</p>
 
       <hr />

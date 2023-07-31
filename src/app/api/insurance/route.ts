@@ -34,10 +34,16 @@ const STRONG_CAR_SURCHARGE = 0.1;
 const BONUS_PROTECTION_CHARGE = 0.12;
 const GLASS_PROTECTION_CHARGE = 0.8;
 
-const getBasePrice = (city: string, dateOfBirth: Date) => {
+const getBasePrice = (
+  city: string,
+  dateOfBirth: Date,
+  disregardAge: boolean
+) => {
   const { basePrice, ageFactor } = CITIES_BASE_PRICE[city];
-  const age = new Date().getFullYear() - dateOfBirth.getFullYear();
 
+  if (disregardAge) return basePrice;
+
+  const age = new Date().getFullYear() - dateOfBirth.getFullYear();
   return age >= 25 ? basePrice : basePrice * ageFactor;
 };
 
@@ -46,16 +52,17 @@ const calculateAoPlusAmount = (dateOfBirth: Date) => {
   return age < 30 ? 55 : 105;
 };
 
+const sumPrices = (prices: number[]) => {
+  return prices.reduce((acc, price) => acc + price, 0);
+};
+
 const calculateAdvisorDiscount = (
   bonusProtection: number,
   aoPlus: number,
   glassProtection: number
 ) => {
   const coverageAmounts = [bonusProtection, aoPlus, glassProtection];
-  const coverageTotal = coverageAmounts.reduce(
-    (acc, amount) => acc + amount,
-    0
-  );
+  const coverageTotal = sumPrices(coverageAmounts);
 
   // if at least two coverage amounts are greater than 0, apply advisor discount
   if (coverageAmounts.filter((amount) => amount > 0).length >= 2) {
@@ -72,7 +79,23 @@ export async function POST(request: Request) {
     dateOfBirth: new Date(data.dateOfBirth),
   };
 
-  const basePrice = getBasePrice(insuranceForm.city, insuranceForm.dateOfBirth);
+  const priceMatch = isNaN(Number(insuranceForm.priceMatch))
+    ? 0
+    : Number(insuranceForm.priceMatch);
+
+  const performPriceMatching = priceMatch > 0;
+
+  const basePriceWithoutPriceMatch = getBasePrice(
+    insuranceForm.city,
+    insuranceForm.dateOfBirth,
+    false
+  );
+
+  let basePrice = getBasePrice(
+    insuranceForm.city,
+    insuranceForm.dateOfBirth,
+    performPriceMatching
+  );
 
   const commercialDiscount = insuranceForm.commercialDiscount
     ? basePrice * COMMERCIAL_DISCOUNT * -1
@@ -98,28 +121,42 @@ export async function POST(request: Request) {
       )
     : 0;
 
-  let totalPrice = [
+  let totalPrice = sumPrices([
     basePrice,
     commercialDiscount,
     bonusProtectionSurcharge,
     aoPlusSurcharge,
     glassProtectionSurcharge,
     advisorDiscount,
-  ].reduce((acc, amount) => acc + amount, 0);
+  ]);
 
   const vipDiscount =
     insuranceForm.vipDiscount && insuranceForm.vehiclePower > 80
       ? totalPrice * VIP_DISCOUNT * -1
       : 0;
-  const strongCarSurcharge =
-    insuranceForm.vehiclePower > 100 ? totalPrice * STRONG_CAR_SURCHARGE : 0;
 
-  const voucher = (insuranceForm.voucher ?? 0) * -1;
+  const strongCarSurcharge =
+    performPriceMatching || insuranceForm.vehiclePower <= 100
+      ? 0
+      : totalPrice * STRONG_CAR_SURCHARGE;
+
+  const voucher =
+    (isNaN(Number(insuranceForm.voucher)) ? 0 : Number(insuranceForm.voucher)) *
+    -1;
 
   totalPrice = totalPrice + vipDiscount + strongCarSurcharge + voucher;
 
+  if (performPriceMatching) {
+    const discountsAndCoverages = totalPrice - basePrice;
+    const newBasePrice = priceMatch - discountsAndCoverages;
+
+    totalPrice = sumPrices([newBasePrice, discountsAndCoverages]);
+    basePrice = newBasePrice;
+  }
+
   return NextResponse.json({
     basePrice,
+    basePriceWithoutPriceMatch,
     totalPrice,
     commercialDiscount,
     advisorDiscount,
