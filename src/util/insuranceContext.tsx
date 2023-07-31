@@ -4,7 +4,6 @@ import {
   ReactNode,
   createContext,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import { InsuranceFormSchema, InsurancePrices, schema } from "./types";
@@ -17,6 +16,7 @@ interface InsuranceContext {
   prices: InsurancePrices;
   onSubmit: SubmitHandler<InsuranceFormSchema>;
   onCheckboxClick: MouseEventHandler<HTMLInputElement>;
+  saveOffer: MouseEventHandler<HTMLButtonElement>;
 }
 
 const insuranceContext = createContext<InsuranceContext>(
@@ -64,6 +64,14 @@ export const InsuranceProvider: FC<{ children: ReactNode }> = ({
     });
   };
 
+  const saveOffer: MouseEventHandler<HTMLButtonElement> = async () => {
+    const formData = form.getValues();
+    const response = await axios.post("/api/insurance/save", {
+      form: formData,
+      prices,
+    });
+  };
+
   return (
     <insuranceContext.Provider
       value={{
@@ -71,6 +79,7 @@ export const InsuranceProvider: FC<{ children: ReactNode }> = ({
         prices,
         onSubmit,
         onCheckboxClick,
+        saveOffer,
       }}
     >
       {children}

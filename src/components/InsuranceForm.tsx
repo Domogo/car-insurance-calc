@@ -1,9 +1,19 @@
 "use client";
 
 import { useInsurance } from "@/util/insuranceContext";
+import { MouseEventHandler } from "react";
+import { useRouter } from "next/navigation";
 
 export const InsuranceForm = () => {
-  const { form, onSubmit } = useInsurance();
+  const { form, onSubmit, saveOffer, prices } = useInsurance();
+  const router = useRouter();
+
+  const saveOfferAndRedirect: MouseEventHandler<HTMLButtonElement> = async (
+    event
+  ) => {
+    await saveOffer(event);
+    router.push("/offers");
+  };
 
   return (
     <form
@@ -169,11 +179,20 @@ export const InsuranceForm = () => {
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
+        {prices.basePrice && (
+          <button
+            type="button"
+            onClick={saveOfferAndRedirect}
+            className="inline-flex justify-center rounded-md bg-neutral-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            Save offer
+          </button>
+        )}
         <button
           type="submit"
           className="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Save
+          Get offer
         </button>
       </div>
     </form>

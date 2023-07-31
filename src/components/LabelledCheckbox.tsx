@@ -10,7 +10,7 @@ export const LabelledCheckbox: FC<Discount> = (discount) => {
   return (
     <div
       key={discount.id}
-      className="relative flex items-center px-4 py-2 max-w-xs rounded-lg shadow-md bg-white"
+      className="relative flex items-center px-4 py-2 max-w-xs h-24 rounded-lg shadow-md bg-white"
     >
       <div className="flex items-center">
         <input

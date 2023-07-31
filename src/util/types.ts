@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { z } from "zod";
 
 export type Discount = {
@@ -95,3 +96,16 @@ export type InsurancePrices = {
   vipDiscount: number;
   strongCarSurcharge: number;
 };
+
+type ID = {
+  _id: ObjectId;
+};
+
+export type NewOffer = {
+  form: InsuranceFormSchema & {
+    dateOfBirth: string;
+  };
+  prices: InsurancePrices;
+};
+
+export type Offer = NewOffer & ID;
