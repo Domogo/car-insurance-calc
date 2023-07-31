@@ -72,7 +72,6 @@ export async function POST(request: Request) {
     dateOfBirth: new Date(data.dateOfBirth),
   };
 
-  console.log(insuranceForm);
   const basePrice = getBasePrice(insuranceForm.city, insuranceForm.dateOfBirth);
 
   const commercialDiscount = insuranceForm.commercialDiscount
@@ -88,7 +87,7 @@ export async function POST(request: Request) {
     : 0;
 
   const glassProtectionSurcharge = insuranceForm.glassProtection
-    ? data.vehiclePower * GLASS_PROTECTION_CHARGE
+    ? insuranceForm.vehiclePower * GLASS_PROTECTION_CHARGE
     : 0;
 
   const advisorDiscount = insuranceForm.advisorDiscount
@@ -109,13 +108,15 @@ export async function POST(request: Request) {
   ].reduce((acc, amount) => acc + amount, 0);
 
   const vipDiscount =
-    data.vipDiscount && data.vehiclePower > 80
+    insuranceForm.vipDiscount && insuranceForm.vehiclePower > 80
       ? totalPrice * VIP_DISCOUNT * -1
       : 0;
   const strongCarSurcharge =
-    data.vehiclePower > 100 ? totalPrice * STRONG_CAR_SURCHARGE : 0;
+    insuranceForm.vehiclePower > 100 ? totalPrice * STRONG_CAR_SURCHARGE : 0;
 
-  totalPrice = totalPrice + vipDiscount + strongCarSurcharge;
+  const voucher = (insuranceForm.voucher ?? 0) * -1;
+
+  totalPrice = totalPrice + vipDiscount + strongCarSurcharge + voucher;
 
   return NextResponse.json({
     basePrice,

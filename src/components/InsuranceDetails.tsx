@@ -1,16 +1,12 @@
 import { useInsurance } from "@/util/insuranceContext";
 
 export const InsuranceDetails = () => {
-  const { prices } = useInsurance();
+  const { prices, form } = useInsurance();
 
-  // commercialDiscount: number;
-  // advisorDiscount: number;
-  // bonusProtectionSurcharge: number;
-  // aoPlusSurcharge: number;
-  // glassProtectionSurcharge: number;
-  // vipDiscount: number;
-  // strongCarSurcharge: number;
   if (!prices.basePrice) return null;
+
+  const voucher = form.getValues("voucher");
+  const voucherAmount = isNaN(Number(voucher)) ? 0 : Number(voucher);
   return (
     <div>
       <p>InsuranceDetails</p>
@@ -26,6 +22,10 @@ export const InsuranceDetails = () => {
       <p>Advisor Discount: {prices.advisorDiscount} EUR</p>
       <p>VIP discount: {prices.vipDiscount}</p>
       <p>Bonus Protection Surcharge: {prices.bonusProtectionSurcharge} EUR</p>
+
+      <hr />
+
+      <p>Voucher: {voucherAmount} EUR</p>
 
       <hr />
 
