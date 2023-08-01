@@ -4,7 +4,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+## Set up env
+
+- copy to envexample to .env.local
+- add your MONGODB_URI to .env.local
+- run the development server:
 
 ```bash
 npm run dev

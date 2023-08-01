@@ -85,7 +85,7 @@ export async function POST(request: Request) {
 
   const performPriceMatching = priceMatch > 0;
 
-  const basePriceWithoutPriceMatch = getBasePrice(
+  let basePriceWithoutPriceMatch = getBasePrice(
     insuranceForm.city,
     insuranceForm.dateOfBirth,
     false
@@ -97,23 +97,23 @@ export async function POST(request: Request) {
     performPriceMatching
   );
 
-  const commercialDiscount = insuranceForm.commercialDiscount
+  let commercialDiscount = insuranceForm.commercialDiscount
     ? basePrice * COMMERCIAL_DISCOUNT * -1
     : 0;
 
-  const bonusProtectionSurcharge = insuranceForm.bonusProtection
+  let bonusProtectionSurcharge = insuranceForm.bonusProtection
     ? basePrice * BONUS_PROTECTION_CHARGE
     : 0;
 
-  const aoPlusSurcharge = insuranceForm.aoPlus
+  let aoPlusSurcharge = insuranceForm.aoPlus
     ? calculateAoPlusAmount(insuranceForm.dateOfBirth)
     : 0;
 
-  const glassProtectionSurcharge = insuranceForm.glassProtection
+  let glassProtectionSurcharge = insuranceForm.glassProtection
     ? insuranceForm.vehiclePower * GLASS_PROTECTION_CHARGE
     : 0;
 
-  const advisorDiscount = insuranceForm.advisorDiscount
+  let advisorDiscount = insuranceForm.advisorDiscount
     ? calculateAdvisorDiscount(
         bonusProtectionSurcharge,
         aoPlusSurcharge,
@@ -130,12 +130,12 @@ export async function POST(request: Request) {
     advisorDiscount,
   ]);
 
-  const vipDiscount =
+  let vipDiscount =
     insuranceForm.vipDiscount && insuranceForm.vehiclePower > 80
       ? totalPrice * VIP_DISCOUNT * -1
       : 0;
 
-  const strongCarSurcharge =
+  let strongCarSurcharge =
     performPriceMatching || insuranceForm.vehiclePower <= 100
       ? 0
       : totalPrice * STRONG_CAR_SURCHARGE;
@@ -153,6 +153,17 @@ export async function POST(request: Request) {
     totalPrice = sumPrices([newBasePrice, discountsAndCoverages]);
     basePrice = newBasePrice;
   }
+
+  totalPrice = Number(totalPrice.toFixed(2));
+  basePrice = Number(basePrice.toFixed(2));
+  basePriceWithoutPriceMatch = Number(basePriceWithoutPriceMatch.toFixed(2));
+  commercialDiscount = Number(commercialDiscount.toFixed(2));
+  advisorDiscount = Number(advisorDiscount.toFixed(2));
+  bonusProtectionSurcharge = Number(bonusProtectionSurcharge.toFixed(2));
+  aoPlusSurcharge = Number(aoPlusSurcharge.toFixed(2));
+  glassProtectionSurcharge = Number(glassProtectionSurcharge.toFixed(2));
+  vipDiscount = Number(vipDiscount.toFixed(2));
+  strongCarSurcharge = Number(strongCarSurcharge.toFixed(2));
 
   return NextResponse.json({
     basePrice,

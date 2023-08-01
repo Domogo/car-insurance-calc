@@ -6,7 +6,7 @@ export default async function Offers() {
   return (
     <main className="p-14">
       <div className="grid grid-cols-3 gap-8">
-        {offers.map((offer) => (
+        {offers?.map((offer) => (
           <div
             key={offer._id.toString()}
             className="bg-white rounded-md shadow-md p-4"

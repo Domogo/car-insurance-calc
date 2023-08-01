@@ -1,7 +1,8 @@
 import { Db, MongoClient } from "mongodb";
 import { NewOffer, Offer } from "./types";
 
-const uri = process.env.MONGODB_URI ?? "";
+const URI = process.env.MONGODB_URI ?? "";
+const COLLECTION_NAME = process.env.DB_COLLECTION ?? "insurance";
 
 let mongoClient: MongoClient;
 let database: Db;
@@ -12,7 +13,7 @@ export async function connectToDatabase() {
       return { mongoClient, database };
     }
 
-    mongoClient = await new MongoClient(uri).connect();
+    mongoClient = await new MongoClient(URI).connect();
     database = mongoClient.db(process.env.DB_NAME);
     return { mongoClient, database };
   } catch (e) {
@@ -23,7 +24,7 @@ export async function connectToDatabase() {
 export const saveOffer = async (offer: NewOffer) => {
   try {
     const client = await connectToDatabase();
-    const insuranceCollection = client?.database?.collection("insurance");
+    const insuranceCollection = client?.database?.collection(COLLECTION_NAME);
 
     const result = await insuranceCollection?.insertOne(offer);
     return result;
@@ -35,7 +36,7 @@ export const saveOffer = async (offer: NewOffer) => {
 export const getOffers = async () => {
   try {
     const client = await connectToDatabase();
-    const insuranceCollection = client?.database.collection("insurance");
+    const insuranceCollection = client?.database.collection(COLLECTION_NAME);
 
     const offers = (await insuranceCollection?.find({}).toArray()) as Offer[];
     return {

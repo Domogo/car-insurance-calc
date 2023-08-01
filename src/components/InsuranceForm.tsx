@@ -37,10 +37,10 @@ export const InsuranceForm = () => {
               </label>
               <div className="mt-2 sm:col-span-2 sm:mt-0">
                 <input
+                  {...form.register("name", { required: true })}
                   type="text"
                   id="name"
                   autoComplete="name"
-                  {...form.register("name", { required: true })}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 />
               </div>
@@ -60,11 +60,11 @@ export const InsuranceForm = () => {
               </label>
               <div className="mt-2 sm:col-span-2 sm:mt-0">
                 <input
-                  type="date"
                   {...form.register("dateOfBirth", {
                     required: true,
                     valueAsDate: true,
                   })}
+                  type="date"
                   id="date-of-birth"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 />
@@ -85,8 +85,8 @@ export const InsuranceForm = () => {
               </label>
               <div className="mt-2 sm:col-span-2 sm:mt-0">
                 <select
-                  id="city"
                   {...form.register("city", { required: true })}
+                  id="city"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 >
                   <option>Pula</option>
@@ -110,12 +110,12 @@ export const InsuranceForm = () => {
               </label>
               <div className="mt-2 sm:col-span-2 sm:mt-0">
                 <input
-                  type="number"
                   {...form.register("vehiclePower", {
                     required: true,
                     valueAsNumber: true,
                     min: 0,
                   })}
+                  type="number"
                   id="vehicle-power"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 />
@@ -136,10 +136,10 @@ export const InsuranceForm = () => {
               </label>
               <div className="mt-2 sm:col-span-2 sm:mt-0">
                 <input
-                  type="number"
                   {...form.register("voucher", {
                     valueAsNumber: true,
                   })}
+                  type="number"
                   id="voucher"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 />
@@ -160,10 +160,10 @@ export const InsuranceForm = () => {
               </label>
               <div className="mt-2 sm:col-span-2 sm:mt-0">
                 <input
-                  type="number"
                   {...form.register("priceMatch", {
                     valueAsNumber: true,
                   })}
+                  type="number"
                   id="price-match"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 />

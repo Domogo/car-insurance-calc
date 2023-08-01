@@ -5,8 +5,6 @@ import { FC } from "react";
 export const LabelledCheckbox: FC<Discount> = (discount) => {
   const { form, onCheckboxClick } = useInsurance();
 
-  const vehiclePower = form.getValues("vehiclePower");
-
   return (
     <div
       key={discount.id}
@@ -14,11 +12,11 @@ export const LabelledCheckbox: FC<Discount> = (discount) => {
     >
       <div className="flex items-center">
         <input
+          {...form.register(discount.id as CheckBoxIds)}
           id={discount.id}
           aria-describedby={discount.description}
           type="checkbox"
           disabled={discount.id === "strongCarSurcharge"}
-          {...form.register(discount.id as CheckBoxIds)}
           onClick={onCheckboxClick}
           className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
         />
